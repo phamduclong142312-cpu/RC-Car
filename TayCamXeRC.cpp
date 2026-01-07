@@ -46,6 +46,13 @@ void setup() {
     return;
   }
 
+  esp_err_t result = esp_now_send(receiverAddr, (uint8_t *) &DataToSend, sizeof(DataToSend));
+if (result == ESP_OK) {
+  Serial.println("Gui thanh cong");
+} else {
+  Serial.println("Gui that bai");
+}
+
   Wire.begin(21, 22);
   if (!oled.begin(SSD1306_SWITCHCAPVCC, OLED_ADDR)) {
     Serial.println("Khong tim thay OLED");
@@ -61,10 +68,10 @@ void loop() {
   int value3 = analogRead(potMaxDC);
   int value4 = analogRead(potSteeringTrim);
   DataToSend.button = digitalRead(Congtac);
-  DataToSend.Steering = map(value1, 0, 4095, 0, 180);
-  DataToSend.Speed = map(value2, 0, 4095, -100, 100);
-  DataToSend.SpeedLimit = map(value3, 0, 4095, 0 , 100);
-  DataToSend.ServoTrim = map(value4, 0, 4095, -15, 15);
+  DataToSend.Steering = constrain(map(value1, 0, 4095, 0, 180),0,180);
+  DataToSend.Speed = constrain(map(value2, 0, 4095, -100, 100),-100,100);
+  DataToSend.SpeedLimit = constrain(map(value3, 0, 4095, 0 , 100),0,100);
+  DataToSend.ServoTrim = constrain(map(value4, 0, 4095, -15, 15),-15,15);
   esp_now_send(receiverAddr, (uint8_t *) &DataToSend, sizeof(DataToSend));
   delay(100);
 
